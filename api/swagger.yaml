@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  title: Financial Future Planner
+  description: |-
+    This is the HTTP API representation of the financial future planner
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: nick@nickborgers.com
+  version: 0.0.1
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: pet
+    description: Everything about your Pets
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: store
+    description: Access to Petstore orders
+    externalDocs:
+      description: Find out more about our store
+      url: http://swagger.io
+  - name: user
+    description: Operations about user
+paths:
+  /Interval:
+    post:
+      tags:
+        - pet
+      summary: Create a record of an interval
+      description: Store a new interval including all associated balances
+      operationId: addBalance
+      requestBody:
+        description: An interval to store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Interval'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interval'          
+        '400':
+          description: Invalid interval provided
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+components:
+  schemas:
+    Period:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+      required:
+        - start
+        - end
+    Interval:
+      type: object
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        balance:
+          type: integer
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Balance'
+        liabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Balance'
+      required:
+        - period
+        - balance
+        - assets
+        - liabilities
+    Balance:
+      type: object
+      properties:
+        account:
+          type: string
+          example: 401k
+        type:
+          type: string
+          example: brokerage
+        class:
+          type: string
+          example: stock
+        balance:
+          type: number
+        fixed_rate:
+          type: number
+          format: float
+        correlary:
+          type: string
+      oneOf:
+        - required: [account, type, class, balance, fixed_rate]
+        - required: [account, type, class, balance, correlary]
